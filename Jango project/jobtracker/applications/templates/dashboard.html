@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Job Tracker{% endblock %}
+
+{% block content %}
+<style>
+    .dashboard-container {
+        max-width: 1200px;
+        width: 100%;
+    }
+    
+    .dashboard-header {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    
+    .dashboard-header h1 {
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .dashboard-header p {
+        color: #666;
+    }
+    
+    .section {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    
+    .section h2 {
+        color: #333;
+        margin-bottom: 1.5rem;
+        border-bottom: 3px solid #667eea;
+        padding-bottom: 0.5rem;
+    }
+    
+    .job-list, .company-list {
+        list-style: none;
+    }
+    
+    .job-item, .company-item {
+        padding: 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        transition: border-color 0.3s, transform 0.2s;
+    }
+    
+    .job-item:hover, .company-item:hover {
+        border-color: #667eea;
+        transform: translateX(5px);
+    }
+    
+    .job-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .job-details {
+        color: #666;
+        font-size: 0.95rem;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+    }
+    
+    .status-applied {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+    
+    .status-interview {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .status-offer {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-rejected {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .empty-state {
+        text-align: center;
+        color: #999;
+        padding: 2rem;
+    }
+    
+    .add-button {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: transform 0.2s;
+    }
+    
+    .add-button:hover {
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Welcome, {{ user.username }}! 👋</h1>
+        <p>Track your job applications and company opportunities</p>
+    </div>
+    
+    <div class="section">
+        <h2>📝 Your Job Applications</h2>
+        {% if jobs %}
+            <ul class="job-list">
+                {% for job in jobs %}
+                <li class="job-item">
+                    <div class="job-title">{{ job.role }}</div>
+                    <div class="job-details">
+                        🏢 {{ job.company.name }}<br>
+                        📅 Deadline: {{ job.deadline }}<br>
+                        🗓️ Applied: {{ job.applied_date }}
+                    </div>
+                    <span class="status-badge status-{{ job.status|lower }}">
+                        {{ job.status }}
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="empty-state">
+                <p>No job applications yet. Start tracking your applications!</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="section">
+        <h2>👁️ Tracked Companies</h2>
+        {% if companies %}
+            <ul class="company-list">
+                {% for company in companies %}
+                <li class="company-item">
+                    <div class="job-title">{{ company.name }}</div>
+                    <div class="job-details">
+                        🔗 <a href="{{ company.career_url }}" target="_blank" style="color: #667eea;">{{ company.career_url }}</a>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="empty-state">
+                <p>No companies tracked yet.</p>
+                <a href="{% url 'add_company' %}" class="add-button">+ Add Company to Track</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
